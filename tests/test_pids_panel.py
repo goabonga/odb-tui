@@ -33,7 +33,7 @@ def test_build_pids_panel_checkbox_format():
     sc = SupportedCommands(modes=modes)
     result = build_pids_panel(sc)
     lines = result.split("\n")
-    rpm_line = [l for l in lines if "RPM" in l][0]
-    egt_line = [l for l in lines if "EGT" in l][0]
+    rpm_line = [line for line in lines if "RPM" in line][0]
+    egt_line = [line for line in lines if "EGT" in line][0]
     assert "[x]" in rpm_line
     assert "[ ]" in egt_line
