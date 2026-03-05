@@ -18,7 +18,7 @@ setup(
     ],
     extras_require={
         "test": ["pytest>=7.0", "pytest-mock>=3.10"],
-        "dev": ["pytest>=7.0", "pytest-mock>=3.10", "ruff>=0.4", "mypy>=1.10"],
+        "dev": ["pytest>=7.0", "pytest-mock>=3.10", "ruff>=0.4", "mypy>=1.10", "types-pyserial>=3.5"],
     },
     entry_points={
         "console_scripts": [
