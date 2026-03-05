@@ -60,3 +60,34 @@ def test_disconnect(mocker):
     ctrl.connect()
     ctrl.disconnect()
     assert ctrl.status == "DISCONNECTED"
+
+
+def test_connect_discovers_commands(mocker):
+    mocker.patch(
+        "odb_tui.controllers.app_controller.detect_obd_device",
+        return_value=("/dev/ttyUSB0", "0403", "6015"),
+    )
+    mock_conn = MagicMock()
+    mock_conn.is_connected.return_value = True
+    mock_conn.supports.return_value = False
+    mocker.patch("odb_tui.services.connection.obd.OBD", return_value=mock_conn)
+    mocker.patch("odb_tui.services.connection.obd.commands.__getitem__", return_value=[])
+    ctrl = AppController()
+    ctrl.connect()
+    assert ctrl.supported_commands is not None
+
+
+def test_disconnect_clears_commands(mocker):
+    mocker.patch(
+        "odb_tui.controllers.app_controller.detect_obd_device",
+        return_value=("/dev/ttyUSB0", "0403", "6015"),
+    )
+    mock_conn = MagicMock()
+    mock_conn.is_connected.return_value = True
+    mock_conn.supports.return_value = False
+    mocker.patch("odb_tui.services.connection.obd.OBD", return_value=mock_conn)
+    mocker.patch("odb_tui.services.connection.obd.commands.__getitem__", return_value=[])
+    ctrl = AppController()
+    ctrl.connect()
+    ctrl.disconnect()
+    assert ctrl.supported_commands is None
