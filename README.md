@@ -1,6 +1,6 @@
 # odb-tui
 
-OBD-II diagnostic TUI.
+Terminal-based OBD-II diagnostic dashboard for real-time vehicle data.
 
 ## Installation
 
@@ -20,7 +20,16 @@ odb-tui --version
 
 ## What it does
 
-Provides a **terminal-based dashboard** for OBD-II vehicle diagnostics.
+- Auto-detect OBD-II USB adapters (vLinker, VID 0403/PID 6015) and connect via python-obd
+- Discover all supported OBD commands (modes 01-09 + ELM) and display them grouped by mode with support checkboxes
+- Dashboard panels with conditional display — only shows data for commands supported by the vehicle:
+  - **Engine** (1): RPM, load, temperatures, fuel, O2 sensors
+  - **Turbo/Air** (2): intake pressure, boost, throttle, accelerator
+  - **EGR** (3): commanded EGR, error interpretation
+  - **Diagnostics** (4): MIL status, DTCs, OBD compliance, counters, calibration
+  - **Errors** (5): active diagnostic trouble codes
+  - **Supported PIDs** (p): full OBD command list with availability checkboxes
+- Keybindings: `c` connect, `d` disconnect, `1`-`5` switch panels, `p` PIDs, `q` quit
 
 ## Development
 
