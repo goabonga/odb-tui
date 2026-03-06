@@ -9,8 +9,7 @@ from odb_tui.views.widgets import bar
 
 def build_engine_panel(state: VehicleState) -> str:
     """Build the engine panel displaying RPM, load, temps, fuel, and O2 data."""
-    lines: list[str] = ["ENGINE"]
-    lines.append("─" * 60)
+    lines: list[str] = []
 
     add_if(lines, "RPM", state.rpm, fmti, bar, 7000)
     add_if(lines, "LOAD %", state.engine_load, fmt, bar, 100)

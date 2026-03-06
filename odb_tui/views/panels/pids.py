@@ -11,7 +11,6 @@ def build_pids_panel(supported_commands: SupportedCommands | None) -> str:
         return "Not connected"
 
     lines: list[str] = []
-    lines.append("SUPPORTED OBD COMMANDS")
     lines.append(f"  Total: {supported_commands.supported_count} / {supported_commands.total} supported")
     lines.append("")
 

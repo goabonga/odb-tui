@@ -5,7 +5,6 @@ from odb_tui.views.panels.engine import build_engine_panel
 from odb_tui.views.panels.errors import build_errors_panel
 from odb_tui.views.panels.turbo import build_turbo_panel
 
-
 # --- Engine panel ---
 
 

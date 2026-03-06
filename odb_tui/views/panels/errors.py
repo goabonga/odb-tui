@@ -7,8 +7,7 @@ from odb_tui.models.vehicle import VehicleState
 
 def build_errors_panel(state: VehicleState) -> str:
     """Build the errors panel displaying active DTCs."""
-    lines: list[str] = ["ERRORS"]
-    lines.append("─" * 60)
+    lines: list[str] = []
 
     if state.connection_status in ("DISCONNECTED", "NO DEVICE", "FAILED"):
         lines.append("  --")

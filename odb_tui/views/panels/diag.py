@@ -8,8 +8,7 @@ from odb_tui.views.formatters import add_if, fmt, fmt_str, fmt_time, fmti
 
 def build_diag_panel(state: VehicleState) -> str:
     """Build the diagnostics panel displaying MIL, DTCs, compliance, and counters."""
-    lines: list[str] = ["DIAGNOSTICS"]
-    lines.append("─" * 60)
+    lines: list[str] = []
 
     # Status (MIL, DTC count, ignition type)
     mil_str = "--"

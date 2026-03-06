@@ -9,8 +9,7 @@ from odb_tui.views.widgets import bar
 
 def build_egr_panel(state: VehicleState) -> str:
     """Build the EGR panel displaying commanded EGR and error interpretation."""
-    lines: list[str] = ["EGR"]
-    lines.append("─" * 60)
+    lines: list[str] = []
 
     if state.egr_cmd is None and state.egr_err is None:
         lines.append("  No EGR data available")
