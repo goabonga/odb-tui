@@ -77,6 +77,7 @@ class OBDReaderApp(App[None]):
     Tabs { background: black; color: green; }
     Tab { background: black; color: green; }
     Tab.-active { background: green; color: black; }
+    Tab.-disabled { color: $text-disabled; opacity: 0.5; }
     """
 
     BINDINGS = [
@@ -106,6 +107,11 @@ class OBDReaderApp(App[None]):
         self._state = VehicleState()
         self._refresh_active_panel()
         self._poll_timer = self.set_interval(1.0, self._poll_sensors, pause=True)
+        self._set_tabs_enabled(False)
+
+    def _set_tabs_enabled(self, enabled: bool) -> None:
+        for tab in self.query("Tab"):
+            tab.disabled = not enabled
 
     def _refresh_status(self) -> None:
         """Update the Footer with connection info."""
@@ -142,6 +148,7 @@ class OBDReaderApp(App[None]):
         self._refresh_status()
         self._refresh_active_panel()
         if self.ctrl.status == "CONNECTED":
+            self._set_tabs_enabled(True)
             self._poll_timer.resume()
 
     async def action_disconnect(self) -> None:
@@ -149,10 +156,13 @@ class OBDReaderApp(App[None]):
         self._poll_timer.pause()
         self.ctrl.disconnect()
         self._state = VehicleState()
+        self._set_tabs_enabled(False)
         self._refresh_status()
         self._refresh_active_panel()
 
     async def action_switch_tab(self, name: str) -> None:
         """Switch to the tab identified by name."""
+        if self.ctrl.status != "CONNECTED":
+            return
         tabs = self.query_one("#tabs", TabbedContent)
         tabs.active = name
