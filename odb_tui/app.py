@@ -110,6 +110,11 @@ class OBDReaderApp(App[None]):
         self._set_tabs_enabled(False)
 
     def _set_tabs_enabled(self, enabled: bool) -> None:
+        """Enable or disable all tabs in the tabbed content.
+
+        Args:
+            enabled: If True, enable all tabs; if False, disable them.
+        """
         for tab in self.query("Tab"):
             tab.disabled = not enabled
 
