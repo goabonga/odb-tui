@@ -3,6 +3,8 @@
 import asyncio
 from unittest.mock import MagicMock, patch
 
+from textual.widgets import Footer, Static
+
 from odb_tui.app import PANEL_BUILDERS, TAB_ORDER, OBDReaderApp
 from odb_tui.views.panels.diag import build_diag_panel
 from odb_tui.views.panels.egr import build_egr_panel
@@ -197,5 +199,89 @@ def test_refresh_active_panel_default_engine(mock_ctrl_cls):
             await pilot.pause()
             tabs = app.query_one("#tabs", TabbedContent)
             assert tabs.active == "engine"
+
+    _run_async(run())
+
+
+@patch("odb_tui.app.AppController")
+def test_no_status_bar_static_widget(mock_ctrl_cls):
+    mock_ctrl_cls.return_value = _mock_ctrl()
+
+    async def run():
+        app = OBDReaderApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            results = app.query("#status-bar")
+            assert len(results) == 0
+
+    _run_async(run())
+
+
+@patch("odb_tui.app.AppController")
+def test_app_has_no_status_bar_attribute_as_static(mock_ctrl_cls):
+    mock_ctrl_cls.return_value = _mock_ctrl()
+
+    async def run():
+        app = OBDReaderApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            assert not hasattr(app, "status_bar") or not isinstance(app.status_bar, Static)
+
+    _run_async(run())
+
+
+@patch("odb_tui.app.AppController")
+def test_refresh_status_method_exists(mock_ctrl_cls):
+    mock_ctrl_cls.return_value = _mock_ctrl()
+
+    async def run():
+        app = OBDReaderApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            assert hasattr(app, "_refresh_status")
+            assert callable(app._refresh_status)
+
+    _run_async(run())
+
+
+@patch("odb_tui.app.AppController")
+def test_default_footer_shows_disconnected_info(mock_ctrl_cls):
+    mock_ctrl_cls.return_value = _mock_ctrl()
+
+    async def run():
+        app = OBDReaderApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            app._refresh_status()
+            await pilot.pause()
+            footer = app.query_one(Footer)
+            assert footer is not None
+
+    _run_async(run())
+
+
+@patch("odb_tui.app.AppController")
+def test_css_has_no_status_bar_rule(mock_ctrl_cls):
+    mock_ctrl_cls.return_value = _mock_ctrl()
+    assert "#status-bar" not in OBDReaderApp.CSS
+
+
+@patch("odb_tui.app.AppController")
+def test_refresh_status_updates_connection_info(mock_ctrl_cls):
+    mock_ctrl = _mock_ctrl()
+    mock_ctrl.status = "CONNECTED"
+    mock_ctrl.port = "/dev/ttyUSB0"
+    mock_ctrl.vid = "1a86"
+    mock_ctrl.pid = "7523"
+    mock_ctrl_cls.return_value = mock_ctrl
+
+    async def run():
+        app = OBDReaderApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            app._refresh_status()
+            await pilot.pause()
+            footer = app.query_one(Footer)
+            assert footer is not None
 
     _run_async(run())
