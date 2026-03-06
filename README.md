@@ -29,6 +29,7 @@ odb-tui --version
   - **Diagnostics** (4): MIL status, DTCs, OBD compliance, counters, calibration
   - **Errors** (5): active diagnostic trouble codes
   - **Supported PIDs** (p): full OBD command list with availability checkboxes
+- Footer displays live connection info: status, port, and device VID:PID
 - Keybindings: `c` connect, `d` disconnect, `1`-`5` switch panels, `p` PIDs, `q` quit
 
 ## Development

@@ -13,6 +13,42 @@ from odb_tui.views.panels.errors import build_errors_panel
 from odb_tui.views.panels.pids import build_pids_panel
 from odb_tui.views.panels.turbo import build_turbo_panel
 
+DEFAULT_CONNECTION_INFO = "DISCONNECTED  |  -  |  -:-"
+
+
+class ConnectionFooter(Footer):
+    """Footer widget that displays OBD-II connection info on the right side."""
+
+    DEFAULT_CSS = """
+    ConnectionFooter {
+        #connection-info {
+            dock: right;
+            width: auto;
+            height: 1;
+            padding: 0 1;
+            color: $footer-description-foreground;
+            background: $footer-background;
+        }
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        """Compose the footer with an additional connection info label."""
+        yield from super().compose()
+        yield Static(DEFAULT_CONNECTION_INFO, id="connection-info")
+
+    def update_connection_info(self, text: str) -> None:
+        """Update the connection info label with the given text.
+
+        Args:
+            text: Formatted connection string to display.
+        """
+        try:
+            info = self.query_one("#connection-info", Static)
+            info.update(text)
+        except Exception:
+            pass
+
 TAB_ORDER: list[tuple[str, str]] = [
     ("engine", "Engine"),
     ("turbo", "Turbo"),
@@ -36,7 +72,6 @@ class OBDReaderApp(App[None]):
 
     CSS = """
     Screen { background: black; color: green; }
-    #status-bar { height: 1; text-align: right; color: green; }
     TabbedContent { background: black; }
     TabPane { background: black; color: green; }
     Tabs { background: black; color: green; }
@@ -63,9 +98,7 @@ class OBDReaderApp(App[None]):
             for tab_id, title in TAB_ORDER:
                 with TabPane(title, id=tab_id):
                     yield Static("", id=f"panel-{tab_id}")
-        self.status_bar = Static("DISCONNECTED  |  -  |  -:-", id="status-bar")
-        yield self.status_bar
-        yield Footer()
+        yield ConnectionFooter()
 
     async def on_mount(self) -> None:
         """Initialize the controller, state, and polling timer."""
@@ -75,8 +108,10 @@ class OBDReaderApp(App[None]):
         self._poll_timer = self.set_interval(1.0, self._poll_sensors, pause=True)
 
     def _refresh_status(self) -> None:
-        """Update the status bar with connection info."""
-        self.status_bar.update(f"{self.ctrl.status}  |  {self.ctrl.port}  |  {self.ctrl.vid}:{self.ctrl.pid}")
+        """Update the Footer with connection info."""
+        text = f"{self.ctrl.status}  |  {self.ctrl.port}  |  {self.ctrl.vid}:{self.ctrl.pid}"
+        footer = self.query_one(ConnectionFooter)
+        footer.update_connection_info(text)
 
     def _refresh_active_panel(self) -> None:
         """Re-render the currently active tab panel."""
